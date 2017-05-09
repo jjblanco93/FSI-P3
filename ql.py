@@ -85,27 +85,23 @@ final_state = getState(3, 3)
 
 print np.reshape(Rewards, (height, width))
 
-
 def qlearning(s1, a, s2):
     Q[s1][a] = Rewards[s2] + discount * max(Q[s2])
     return
 
-
+# Se comprueba la tabla Q, en caso de que el valor de todas las acciones = 0, se mueve al azar.
+# En caso de que haya con un valor != 0 la que tenga mayor valor.
 def greedy(state):
     if max(Q[state]) > 0:
         index = np.argmax(Q[state])
         return actions_map[index]
     return getRndAction(state)
 
-
+# Al igual que Greedy pero con E probabilidad de tomar un camino aleatorio.
 def egreedy(state):
-    if random.uniform(0.0, 1.0) > 0.5:
+    if random.uniform(0.0, 1.0) > 0.9:
         return getRndAction(state)
     return greedy(state)
-
-    # 48: [0.0, 0.0, -10000, 3.98]
-    # index = 3 = "UP"
-    # (3, 3) + (-1, 0) = (2, 3) -> 45
 
 movements = 0
 amovements = 0
@@ -116,10 +112,10 @@ list =[]
 for i in xrange(episodes):
     state = 79
     while state != final_state:
-        action = greedy(state)
+        #action = greedy(state)
         #action = egreedy(state)
-        #action = getRndAction(state)
-        # print "Action: ", action
+        action = getRndAction(state)
+        #print "Action: ", action
         y = getStateCoord(state)[0] + actions_vectors[action][0]
         x = getStateCoord(state)[1] + actions_vectors[action][1]
         new_state = getState(y, x)
@@ -127,19 +123,23 @@ for i in xrange(episodes):
         state = new_state
         movements += 1
         amovements += 1
+    # Numero de movimientos en cada episodio
     print "Number of movements: ", (i, movements)
     list.append(movements)
     movements = 0
+
 #print Q
 
+# Calculamos promedio de las acciones.
 print "Average number of movements: ", (amovements / episodes)
 
+# Grafica de movimientos por episodio
 plt.ylabel('Movimientos')
 plt.xlabel('Episodio')
 test_line, = plt.plot(list)
 plt.legend(handle=[test_line],
            label=["Test errors"])
-plt.savefig('greedy.png')
+plt.savefig('random.png')
 
 # Q matrix plot
 
