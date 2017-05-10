@@ -5,11 +5,11 @@ import matplotlib
 matplotlib.use('Agg')
 
 
-# Environment size
+# Tamaño del tablero
 width = 5
 height = 16
 
-# Actions
+# Numero de acciones disponibles
 num_actions = 4
 
 actions_list = {
