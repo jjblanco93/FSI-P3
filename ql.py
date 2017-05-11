@@ -5,13 +5,14 @@ import matplotlib
 matplotlib.use('Agg')
 
 
-# Tamaño del tablero
+# Tablero
 width = 5
 height = 16
 
 # Numero de acciones disponibles
 num_actions = 4
 
+# Lista de acciones
 actions_list = {
     "UP": 0,
     "RIGHT": 1,
@@ -19,6 +20,7 @@ actions_list = {
     "LEFT": 3
 }
 
+# Mapa de acciones para greedy
 actions_map = {
     0: "UP",
     1: "RIGHT",
@@ -26,6 +28,7 @@ actions_map = {
     3: "LEFT"
 }
 
+# Movimientos en el tablero
 actions_vectors = {
     "UP": (-1, 0),
     "RIGHT": (0, 1),
@@ -36,18 +39,18 @@ actions_vectors = {
 # Discount factor 0.8
 discount = 0.8
 
-Q = np.zeros((height * width, num_actions))  # Q matrix
-Rewards = np.zeros(height * width)  # Reward matrix, it is stored in one dimension
+Q = np.zeros((height * width, num_actions))  # Matriz Q a 0
+Rewards = np.zeros(height * width)  # Matriz de recompensas en una dimension
 
-
+# Posicion
 def getState(y, x):
     return y * width + x
 
-
+# Coordenadas de la posicion
 def getStateCoord(state):
     return int(state / width), int(state % width)
 
-
+# Acciones
 def getActions(state):
     y, x = getStateCoord(state)
     actions = []
@@ -61,15 +64,15 @@ def getActions(state):
         actions.append("UP")
     return actions
 
-
+# Accion al azar
 def getRndAction(state):
     return random.choice(getActions(state))
 
-
+# Posicion al azar
 def getRndState():
     return random.randint(0, height * width - 1)
 
-
+# Obstaculos y posicion final
 Rewards[4 * width + 3] = -10000
 Rewards[4 * width + 2] = -10000
 Rewards[4 * width + 1] = -10000
@@ -85,6 +88,7 @@ final_state = getState(3, 3)
 
 print np.reshape(Rewards, (height, width))
 
+# Aprendizaje por refuerzo, recompensa+descuento*max
 def qlearning(s1, a, s2):
     Q[s1][a] = Rewards[s2] + discount * max(Q[s2])
     return
@@ -103,13 +107,16 @@ def egreedy(state):
         return getRndAction(state)
     return greedy(state)
 
+
+# Contador de movimientos y media de movimientos
 movements = 0
 amovements = 0
 
-# Episodes
+# Episodios y mapa para la grafica
 episodes = 100
 list =[]
 for i in xrange(episodes):
+    # Pos 79
     state = 79
     while state != final_state:
         #action = greedy(state)
